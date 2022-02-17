@@ -1,30 +1,32 @@
-// this is cutting out the first two indexes of the array, from the command line, which are --> node app.js 
-// and saving the rest of the indexes from the command line
-// leaves out indexes 0, 1 and the number that = process.argv.length - gets everything in between
+// holds the users command line arguments, starting at input 2 (not 0 nor 1)
 const profileDataArgs = process.argv.slice(2, process.argv.length);
-console.log(profileDataArgs);
+// save the indexes from the array formed by the command line arguments
+const [name1, github] = profileDataArgs;
 
-// Notice the lack of ( ) around the `profileDataArr` parameter? Don't need bc only 1 parameter is being passed
-// print out the items in the array one by one
-const printProfileData = profileDataArr => {
-    // This...
-    for (let i = 0; i < profileDataArr.length; i += 1) {
-      console.log(profileDataArr[i]);
-    }
-  
-    console.log('================');
-  
-    // Is the same as this...
-    profileDataArr.forEach((profileItem) => {
-      console.log(profileItem)
-    });
-
-    console.log('================');
-
-    // Is the same as this... 
-    // Using an arrow function, we can avoid using the function keyword, parentheses around the function parameter, and the curly braces used to wrap a function, as we're only performing one action in the function.
-    profileDataArr.forEach(profileItem => console.log(profileItem));
+// This function receives input and returns a string with variables interpolated in it
+// to receive name1 and github inputs
+const generatePage = (userName, githubName) => {
+   // receives the command line arguments, inserts them in a HTML template literal, and returns HTML string
+   return `
+   <!DOCTYPE html> 
+   <html lang="en"> 
+   <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     <title>Portfolio Demo</title>
+   </head>
+ 
+   <body>
+     <h1>${name1}</h1>
+     <h2><a href="https://github.com/${github}">Github</a></h2>
+   </body>
+   </html>
+   `;
 };
-printProfileData(profileDataArgs);
+
+console.log(name1, github);
+console.log(generatePage(name1, github));
+
 
 
