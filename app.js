@@ -25,8 +25,19 @@ const generatePage = (userName, githubName) => {
    `;
 };
 
-console.log(name1, github);
-console.log(generatePage(name1, github));
+// To tell node you want to use the File System module, use the require() method
+// takes this core module & saves it to that variable, making it a special JS object that has access to all methods apart of the module
+const fs = require('fs');
 
-
-
+// 1st parameter --> the name of the file that's being created (output file)
+// 2nd parameter --> the data that will write onto the file --> in this case HTML template literal
+// 3rd parameter --> a callback function that will be used for error handling and a success message
+// the err doesn't need () bc it's only one parameter, but, when there are no arguments or more than one, () are necessary
+// removed ( ) from err bc it's a callback function w 1 parameter
+// .writeFile is a method
+fs.writeFile('index.html', generatePage(name1, github), err => {
+   // handles errors
+   if (err) throw err;
+   
+   console.log('Portfolio complete! Check out index.html to see the output!');
+});
