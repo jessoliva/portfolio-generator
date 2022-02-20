@@ -58,9 +58,28 @@ const promptUser = () => {
          }
       },
       {
+         type: 'confirm', // confirm question type automatically turns "Y" into true, and "N" into false
+         name: 'confirmAbout',
+         message: 'Would you like to enter some information about yourself for an "About" section?',
+         default: true
+      },
+      {
         type: 'input',
         name: 'about',
-        message: 'Provide some information about yourself:'
+        message: 'Provide some information about yourself:',
+        when: ({ confirmAbout }) => { 
+          // so only ask this questions WHEN the user confirms the previous question
+          // used the when method to conditionally prompt a question based on the user's input
+          // when property passes an object of all of the answers given so far as an object
+          // inquirer method automatically passes an object containing the user's answers to the when function
+          // so passes the name, github name, and answer for confirmAbout
+          // user is only prompted for the information regarding the About section if the user answers yes to the request
+            if (confirmAbout) {
+               return true;
+            } else {
+               return false;
+            }
+        }
       }
    ]);
 };
