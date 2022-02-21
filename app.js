@@ -1,28 +1,45 @@
-// // purpose of app.js file is to execute functions to capture user input and create a file
+// purpose of app.js file is to execute functions to capture user input and create a file
 
 // tell node to use the inquirer module that was downloaded
 const inquirer = require('inquirer');
- 
-// // tells node to use the File System module
-// const fs = require('fs');
+//
+// tells node to use the File System module
+const fs = require('fs');
+//
+// for destination file that we want to receive the exported functions from src file from
+// receiving generatePage() function from page-template.js file --> need relative path
+// the object in the module.exports assignment will be reassigned to the generatePage variable in the app.js file
+// the relative path to include the file must be exact
+// this expression assigns the anonymous HTML template function in page-template.js to the variable generatePage
+const generatePage = require('./src/page-template')
 
-// // for destination file that we want to receive the exported functions from src file from
-// // receiving generatePage() function from page-template.js file --> need relative path
-// // the object in the module.exports assignment will be reassigned to the generatePage variable in the app.js file
-// // the relative path to include the file must be exact.
-// const generatePage = require('./src/page-template')
-
-// // get the code from page-template.js
-// const pageHTML = generatePage(name1, github);
-
-// // create a file
-// // writes the code from the previous function into the html file
-// fs.writeFile('./index.html', pageHTML, err => {
-//    // handles errors
-//   if (err) throw new Error(err);
-
-//   console.log('Portfolio complete! Check out index.html to see the output!');
-// });
+const mockData = {
+   name: 'Lernantino',
+   github: 'lernantino',
+   confirmAbout: true,
+   about:
+     'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et.',
+   projects: [
+     {
+       name: 'Run Buddy',
+       description:
+         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+       languages: ['HTML', 'CSS'],
+       link: 'https://github.com/lernantino/run-buddy',
+       feature: true,
+       confirmAddProject: true
+     },
+     {
+       name: 'Taskinator',
+       description:
+         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
+       languages: ['JavaScript', 'HTML', 'CSS'],
+       link: 'https://github.com/lernantino/taskinator',
+       feature: true,
+       confirmAddProject: true
+     }
+   ]
+};
 
 // the function returns a running of inquire.prompt(), thus returning what it returns, which is a Promise
 // the Promise will resolve with a .then() method
@@ -176,7 +193,18 @@ const promptProject = portfolioData => {
 promptUser()
    .then(promptProject) // collect data and save as portfolioData
    .then(portfolioData => {
-      console.log(portfolioData);
+
+      // expression that invokes the generatePage() with portfolioData
+      // and uses the result from our inquirer prompts as an argument called portfolioData --> an object
+      // const pageHTML = generatePage(portfolioData);
+      const pageHTML = generatePage(mockData);
+
+      // provides ability to write the HTML template to a file
+      fs.writeFile('./index.html', pageHTML, err => {
+         if (err) throw new Error(err);
+
+         console.log('Page created! Check out index.html in this directory to see it!');
+      });
    });
 
 
