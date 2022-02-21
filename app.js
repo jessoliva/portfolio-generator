@@ -200,11 +200,29 @@ promptUser()
       const pageHTML = generatePage(mockData);
 
       // provides ability to write the HTML template to a file
-      fs.writeFile('./index.html', pageHTML, err => {
+      fs.writeFile('./dist/index.html', pageHTML, err => {
          if (err) throw new Error(err);
 
          console.log('Page created! Check out index.html in this directory to see it!');
+
+         // arg 1 --> copy styles.css file
+         // arg 2 --> coped file's intended destination AND name
+         // arg 3 --> A callback function to execute on either completion or error, which accepts an error object as a parameter so that we can check if something went wrong
+         // find style.css in the src directory and create a copy of it in the dist directory
+         fs.copyFile('./src/style.css', './dist/style.css', err => {
+
+            // if there's an error, we'll let the user know and stop the .copyFile() method from running with a return statement.
+            if (err) {
+               console.log(err);
+               return;
+            }
+            console.log('Style sheet copied successfully!');
+         });
       });
+
+
+
+
    });
 
 
