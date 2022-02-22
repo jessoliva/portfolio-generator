@@ -2,44 +2,17 @@
 
 // tell node to use the inquirer module that was downloaded
 const inquirer = require('inquirer');
-//
-// tells node to use the File System module
-const fs = require('fs');
-//
+
+// to import the exported object from generate-site.js
+// allowing us to use generateSite.writeFile() and generateSite.copyFile()
+const { writeFile, copyFile } = require('./utils/generate-site.js');
+
 // for destination file that we want to receive the exported functions from src file from
 // receiving generatePage() function from page-template.js file --> need relative path
 // the object in the module.exports assignment will be reassigned to the generatePage variable in the app.js file
 // the relative path to include the file must be exact
 // this expression assigns the anonymous HTML template function in page-template.js to the variable generatePage
 const generatePage = require('./src/page-template')
-
-const mockData = {
-   name: 'Lernantino',
-   github: 'lernantino',
-   confirmAbout: true,
-   about:
-     'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et.',
-   projects: [
-     {
-       name: 'Run Buddy',
-       description:
-         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
-       languages: ['HTML', 'CSS'],
-       link: 'https://github.com/lernantino/run-buddy',
-       feature: true,
-       confirmAddProject: true
-     },
-     {
-       name: 'Taskinator',
-       description:
-         'Duis consectetur nunc nunc. Morbi finibus non sapien nec pharetra. Fusce nec dignissim orci, ac interdum ipsum. Morbi mattis justo sed commodo pellentesque. Nulla eget fringilla nulla. Integer gravida magna mi, id efficitur metus tempus et. Nam fringilla elit dapibus pellentesque cursus.',
-       languages: ['JavaScript', 'HTML', 'CSS'],
-       link: 'https://github.com/lernantino/taskinator',
-       feature: false,
-       confirmAddProject: true
-     }
-   ]
-};
 
 // the function returns a running of inquire.prompt(), thus returning what it returns, which is a Promise
 // the Promise will resolve with a .then() method
@@ -186,48 +159,64 @@ const promptProject = portfolioData => {
          // return the portfolioData for the curr project in the else statement explicitly so that the object is returned
       }
    });
-
 };
 
-// by chaining the function call to the then() method, we can control the sequence of the application's control flow
-promptUser()
-   .then(promptProject) // collect data and save as portfolioData
-   .then(portfolioData => {
-
-      // expression that invokes the generatePage() with portfolioData
-      // and uses the result from our inquirer prompts as an argument called portfolioData --> an object
-      // const pageHTML = generatePage(portfolioData);
-      const pageHTML = generatePage(mockData);
-
-      // provides ability to write the HTML template to a file
-      fs.writeFile('./dist/index.html', pageHTML, err => {
-         if (err) throw new Error(err);
-
-         console.log('Page created! Check out index.html in this directory to see it!');
-
-         // arg 1 --> copy styles.css file
-         // arg 2 --> coped file's intended destination AND name
-         // arg 3 --> A callback function to execute on either completion or error, which accepts an error object as a parameter so that we can check if something went wrong
-         // find style.css in the src directory and create a copy of it in the dist directory
-         fs.copyFile('./src/style.css', './dist/style.css', err => {
-
-            // if there's an error, we'll let the user know and stop the .copyFile() method from running with a return statement.
-            if (err) {
-               console.log(err);
-               return;
-            }
-            console.log('Style sheet copied successfully!');
-         });
-      });
+// refactored code using promises
+// continue to return the separate functions' output into the next .then() method
+promptUser() // ask user questions, and returns output
+  .then(promptProject) // asks project questions, and returns output as object
+  .then(portfolioData => { // finished portfolio data object is returned as portfolioDate & sent into the generatePage()
+      return generatePage(portfolioData); // returns the finished HTML template code into pageHTML
+  })
+  .then(pageHTML => { // gets the html the from the previous function, and uses it as parameter
+      return writeFile(pageHTML); // pass HTML here, which returns a Promise, this is why we use return here, so the Promise is returned into the next .then() method
+  })
+  .then(writeFileResponse => { // Upon a successful file creation, we take the writeFileResponse object provided by the writeFile() function's resolve() execution to log it
+      console.log(writeFileResponse);
+      return copyFile(); // and then we return copyFile(), a Promise is returned by this
+  })
+  .then(copyFileResponse => { // the Promise returned by copyFile() then lets us know if the CSS file was copied correctly
+      console.log(copyFileResponse);
+  })
+  .catch(err => { // catch all errors, only need one .catch() method to handle any error that may occur with any of the Promise-based functions
+      console.log(err);
+  });
 
 
+// // old code using callback funcitons inside of callack functions
+// // by chaining the function call to the then() method, we can control the sequence of the application's control flow
+// promptUser()
+//    .then(promptProject) // collect data and save as portfolioData
+//    .then(portfolioData => {
 
+//       // expression that invokes the generatePage() with portfolioData
+//       // and uses the result from our inquirer prompts as an argument called portfolioData --> an object
+//       // const pageHTML = generatePage(portfolioData);
 
-   });
+//       // provides ability to write the HTML template to a file
+//       fs.writeFile('./dist/index.html', pageHTML, err => {
+//          if (err) throw new Error(err);
 
+//          console.log('Page created! Check out index.html in this directory to see it!');
 
-// the Promise from inquirer can now be handled by the function call
-// we're calling a function that returns the result of inquire.prompt, which is a Promise
-// We therefore append the .then() method to the function call, since it returns a Promise, and we put into .then() whatever we wish to take place after the Promise is resolved
-// there's a function in the .then() method --> arrow function w 1 argument 
-// promptUser().then(answers => console.log(answers));
+//          // arg 1 --> copy styles.css file
+//          // arg 2 --> coped file's intended destination AND name
+//          // arg 3 --> A callback function to execute on either completion or error, which accepts an error object as a parameter so that we can check if something went wrong
+//          // find style.css in the src directory and create a copy of it in the dist directory
+//          fs.copyFile('./src/style.css', './dist/style.css', err => {
+
+//             // if there's an error, we'll let the user know and stop the .copyFile() method from running with a return statement.
+//             if (err) {
+//                console.log(err);
+//                return;
+//             }
+//             console.log('Style sheet copied successfully!');
+//          });
+//       });
+//    });
+// // the Promise from inquirer can now be handled by the function call
+// // we're calling a function that returns the result of inquire.prompt, which is a Promise
+// // We therefore append the .then() method to the function call, since it returns a Promise, and we put into .then() whatever we wish to take place after the Promise is resolved
+// // there's a function in the .then() method --> arrow function w 1 argument 
+// // promptUser().then(answers => console.log(answers));
+

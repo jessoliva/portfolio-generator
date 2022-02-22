@@ -24,7 +24,6 @@ const generateProjects = projectsArr => {
     <section class="my-3" id="portfolio">
       <h2 class="text-dark bg-primary p-2 display-inline-block">Work</h2>
       <div class="flex-row justify-space-between">
-
       ${projectsArr
         .filter(({ feature }) => feature)
         .map(({ name, description, languages, link }) => {
@@ -41,7 +40,6 @@ const generateProjects = projectsArr => {
         `;
         })
         .join('')}
-
       ${projectsArr
         .filter(({ feature }) => !feature)
         .map(({ name, description, languages, link }) => {
@@ -58,7 +56,6 @@ const generateProjects = projectsArr => {
         `;
         })
         .join('')}
-
       </div>
     </section>
   `;
@@ -126,4 +123,3 @@ module.exports = templateData => {
   // People often simply forget that the year has changed since the first time they set up their site, so the code we use there will get the current year and put it in the <footer> element every time we run the app
   // This is another benefit of using string interpolation in JavaScript: we can execute valid JavaScript code inline with the text
 };
-
