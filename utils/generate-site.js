@@ -47,26 +47,6 @@ const copyFile = () => {
    });
 };
 
-
-// demo HTML code
-const sampleHtml = '<h1>This will be written to the file!</h1>';
-
-writeFile(sampleHtml)
-  .then(successfulResponse => {
-      // this will run when we use `resolve()`
-      console.log(successfulResponse);
-  })
-  .catch(errorResponse => {
-      // this will run when we use `reject()`
-      console.log(errorResponse);
-  });
-
 // export from generate-site.js to import into app.js
 // exporting an object with the two functions, writeFile() and copyFile(), used as methods, writeFile and copyFile
 module.exports = { writeFile, copyFile };
-
-// // same as but shortened
-// module.exports = {
-//    writeFile: writeFile,
-//    copyFile: copyFile
-// };
